@@ -151,10 +151,9 @@
     .page.is-active { display: block; }
 
     .lang-chip {
-      position: absolute;
-      top: 0.65rem;
-      right: var(--margin-x);
-      margin: 0;
+      display: block;
+      width: fit-content;
+      margin: 0 0 0.55rem auto;
       padding: 0.22rem 0.5rem;
       border-radius: 999px;
       background: var(--chip-bg);
@@ -184,7 +183,6 @@
 
     h1 {
       margin: 0;
-      padding-right: 2.5rem;
       font-size: clamp(1.35rem, 6.5vw, 1.65rem);
       line-height: 1.18;
       font-weight: 700;
@@ -409,13 +407,12 @@
       .sheet { padding: 1.35rem var(--margin-x) 2.8rem; }
 
       h1 {
-        padding-right: 0;
         font-size: clamp(1.15rem, 2.4vw, 1.42rem);
       }
 
       .lang-chip {
-        top: 0.85rem;
         font-size: 0.65rem;
+        margin-bottom: 0.45rem;
       }
 
       .byline {
