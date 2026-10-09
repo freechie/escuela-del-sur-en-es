@@ -1,0 +1,15 @@
+{
+  "name": "La Escuela del Sur",
+  "short_name": "Escuela del Sur",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#f4f1eb",
+  "theme_color": "#054268"
+}
