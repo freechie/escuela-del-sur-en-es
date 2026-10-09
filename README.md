@@ -8,7 +8,7 @@ Original flipbook: [La Revista Nº 375 on Heyzine](https://heyzine.com/flip-book
 ## Credits
 
 - **Spanish article:** Lic. María Eugenia Méndez — *La Revista* Nº 375
-- **English edition, bilingual flip viewer, and web design:** [John](https://github.com/freechie)
+- **English translation and web build:** [John](https://github.com/freechie), at the request of Marcos Torres
 
 ## Local preview
 
