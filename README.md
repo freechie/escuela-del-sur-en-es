@@ -8,7 +8,7 @@ Original flipbook: [La Revista Nº 375 on Heyzine](https://heyzine.com/flip-book
 ## Credits
 
 - **Spanish article:** Lic. María Eugenia Méndez — *La Revista* Nº 375
-- **English translation and web build:** [John](https://github.com/freechie), at the request of Marcos Torres
+- **English translation and web build:** [John](https://github.com/freechie), at the request of [Marcos Torres](https://www.instituteforculturalactivism.org/episodes/episode-13-marcos-torres-andrada)
 
 ## Local preview
 
