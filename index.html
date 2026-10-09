@@ -669,7 +669,7 @@
     <span id="status">EN · page 10</span>
     <button type="button" id="next" aria-label="Next page">Next →</button>
   </div>
-  <p class="hint">Tap the page, use the buttons, or press ← → · EN then ES</p>
+  <p class="hint">Use the buttons or press ← → · EN then ES</p>
   <p class="credit">
     Spanish text originally published in
     <strong>La Revista</strong> Nº&nbsp;375 (Octubre&nbsp;2026),
@@ -768,12 +768,8 @@
       render({ scrollTop: true });
     }
 
-    prev.addEventListener("click", (e) => { e.stopPropagation(); go(-1); });
-    next.addEventListener("click", (e) => { e.stopPropagation(); go(1); });
-    book.addEventListener("click", () => {
-      if (index < pages.length - 1) go(1);
-      else go(-(pages.length - 1));
-    });
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
     window.addEventListener("keydown", (e) => {
       if (e.key === "ArrowRight") go(1);
       if (e.key === "ArrowLeft") go(-1);
