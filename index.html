@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>La Escuela del Sur: a living tradition</title>
+  <script>
+    (() => {
+      const saved = localStorage.getItem("theme");
+      const theme = saved === "light" || saved === "dark"
+        ? saved
+        : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.themeSource = saved ? "manual" : "auto";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --stripe-1: #0f87be;
+      --stripe-2: #009cc3;
+      --stripe-3: #d42029;
+      --stripe-4: #ef4148;
+      --stripe-5: #d45127;
+      --stripe-6: #f26727;
+      --title-dark: #6b1d0e;
+      --title-warm: #925c24;
+      --ink: #302c2d;
+      --ink-muted: #4a4544;
+      --ink-soft: #3a3635;
+      --line: #b9b3ad;
+      --page-bg: #ffffff;
+      --page-blue: #054268;
+      --chip-bg: rgba(5, 66, 104, 0.1);
+      --page-w: 100%;
+      --margin-x: 1rem;
+      --col-gap: 1.25rem;
+      --touch: 44px;
+      --chrome: #ece8e2;
+      --chrome-gradient: linear-gradient(180deg, #f4f1eb 0%, #e5e0d8 100%);
+      --ui-fg: #2a2f36;
+      --ui-muted: rgba(42, 47, 54, 0.65);
+      --ui-link: #0b5f8a;
+      --ui-bar: rgba(255, 255, 255, 0.88);
+      --ui-btn-bg: rgba(42, 47, 54, 0.08);
+      --ui-btn-border: rgba(42, 47, 54, 0.16);
+      --ui-btn-fg: #1c2128;
+      --ui-shadow: 0 8px 28px rgba(40, 35, 28, 0.12);
+      --page-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+      --img-filter: none;
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --title-dark: #e8a090;
+      --title-warm: #d4a46a;
+      --ink: #e8e4df;
+      --ink-muted: #b8b2ab;
+      --ink-soft: #c4bdb5;
+      --line: #5a5550;
+      --page-bg: #1a1e23;
+      --page-blue: #7eb4d4;
+      --chip-bg: rgba(126, 180, 212, 0.16);
+      --chrome: #0e1114;
+      --chrome-gradient: radial-gradient(1200px 700px at 50% 20%, #2a323a 0%, #151a1f 55%, #0e1114 100%);
+      --ui-fg: #d7dde3;
+      --ui-muted: rgba(215, 221, 227, 0.7);
+      --ui-link: #9ec9e8;
+      --ui-bar: rgba(26, 30, 35, 0.94);
+      --ui-btn-bg: rgba(255, 255, 255, 0.1);
+      --ui-btn-border: rgba(255, 255, 255, 0.18);
+      --ui-btn-fg: #fff;
+      --ui-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      --page-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      --img-filter: brightness(0.92) contrast(1.05);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Source Sans 3", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--chrome);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.65rem;
+      padding:
+        env(safe-area-inset-top, 0)
+        0
+        calc(0.65rem + env(safe-area-inset-bottom, 0));
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .topbar {
+      order: 0;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.45rem 0.75rem 0;
+    }
+
+    .theme-toggle {
+      appearance: none;
+      border: 1px solid var(--ui-btn-border);
+      background: var(--ui-btn-bg);
+      color: var(--ui-btn-fg);
+      border-radius: 999px;
+      min-height: var(--touch);
+      min-width: var(--touch);
+      padding: 0.4rem 0.85rem;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .theme-toggle:active { filter: brightness(0.96); }
+    .theme-toggle .icon { font-size: 1rem; line-height: 1; }
+
+    .stage {
+      order: 1;
+      width: var(--page-w);
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .book { width: 100%; position: relative; }
+
+    .page {
+      display: none;
+      width: 100%;
+      background: var(--page-bg);
+      color: var(--ink);
+      overflow: visible;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .page.is-active { display: block; }
+
+    .lang-chip {
+      position: absolute;
+      top: 0.65rem;
+      right: var(--margin-x);
+      margin: 0;
+      padding: 0.22rem 0.5rem;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      color: var(--page-blue);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .stripe {
+      height: 8px;
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr 1.25fr 1.25fr 0.85fr 0.85fr;
+    }
+    .stripe span:nth-child(1) { background: var(--stripe-1); }
+    .stripe span:nth-child(2) { background: var(--stripe-2); }
+    .stripe span:nth-child(3) { background: var(--stripe-3); }
+    .stripe span:nth-child(4) { background: var(--stripe-4); }
+    .stripe span:nth-child(5) { background: var(--stripe-5); }
+    .stripe span:nth-child(6) { background: var(--stripe-6); }
+
+    .sheet {
+      padding: 1rem var(--margin-x) 2.4rem;
+      position: relative;
+    }
+
+    h1 {
+      margin: 0;
+      padding-right: 2.5rem;
+      font-size: clamp(1.35rem, 6.5vw, 1.65rem);
+      line-height: 1.18;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+    }
+    h1 .dark { color: var(--title-dark); }
+    h1 .warm { color: var(--title-warm); }
+
+    .byline-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      margin: 0.55rem 0 0.85rem;
+    }
+    .byline-row::before {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+    .byline {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--ink-muted);
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      align-items: start;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      text-align: left;
+      overflow-wrap: break-word;
+    }
+
+    .columns p { margin: 0 0 1em; }
+
+    .drop::first-letter {
+      float: left;
+      font-size: 2.7em;
+      line-height: 0.85;
+      font-weight: 700;
+      padding: 0.05em 0.08em 0 0;
+      color: var(--ink);
+    }
+
+    .sculpture {
+      float: left;
+      width: 36%;
+      max-width: 8.5rem;
+      margin: 0.1em 0.75em 0.35em 0;
+    }
+    .sculpture img,
+    .painting img,
+    .page11-art img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: var(--img-filter);
+    }
+
+    .painting,
+    .page11-art {
+      display: block;
+      width: min(82%, 20rem);
+      margin: 0.85em auto 1.1em;
+    }
+
+    .page-num {
+      position: absolute;
+      bottom: 0.7rem;
+      width: 1.45rem;
+      height: 1.45rem;
+      background: var(--page-blue);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+    }
+    .page[data-mag="10"] .page-num { left: var(--margin-x); }
+    .page[data-mag="11"] .page-num { right: var(--margin-x); left: auto; }
+
+    .bio {
+      margin-top: 1em;
+      font-size: 0.92rem;
+      font-style: italic;
+      text-align: left;
+      line-height: 1.45;
+      color: var(--ink-soft);
+    }
+
+    .controls {
+      order: 2;
+      position: sticky;
+      bottom: calc(0.4rem + env(safe-area-inset-bottom, 0));
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: calc(100% - 1rem);
+      max-width: 28rem;
+      margin: 0 auto;
+      padding: 0.35rem;
+      border-radius: 999px;
+      background: var(--ui-bar);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: var(--ui-fg);
+      font-size: 0.85rem;
+      box-shadow: var(--ui-shadow);
+      border: 1px solid var(--ui-btn-border);
+    }
+    #status {
+      flex: 1;
+      text-align: center;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .controls button {
+      appearance: none;
+      border: 1px solid var(--ui-btn-border);
+      background: var(--ui-btn-bg);
+      color: var(--ui-btn-fg);
+      border-radius: 999px;
+      min-height: var(--touch);
+      min-width: 4.5rem;
+      padding: 0.45rem 0.85rem;
+      font: inherit;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .controls button:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .controls button:not(:disabled):active {
+      filter: brightness(0.96);
+    }
+
+    .hint {
+      display: none;
+      margin: 0;
+      color: var(--ui-muted);
+      font-size: 0.78rem;
+      text-align: center;
+    }
+
+    .credit {
+      order: 3;
+      width: min(100%, 36rem);
+      margin: 0.35rem auto 0;
+      padding: 0 0.9rem;
+      color: var(--ui-muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+    .credit strong {
+      color: var(--ui-fg);
+      font-weight: 600;
+    }
+    .credit a {
+      color: var(--ui-link);
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+    }
+    .zine-links {
+      order: 4;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.35rem 0.9rem;
+      width: 100%;
+      margin: 0;
+      padding: 0 0.75rem 0.35rem;
+      list-style: none;
+      text-align: center;
+    }
+    .zine-links a {
+      color: var(--ui-link);
+      font-size: 0.84rem;
+      text-decoration: underline;
+      text-underline-offset: 0.18em;
+      min-height: var(--touch);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Tablet / desktop: magazine card + two columns */
+    @media (min-width: 720px) {
+      :root {
+        --page-w: min(92vw, 552px);
+        --margin-x: 1.65rem;
+      }
+
+      body {
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0));
+        background: var(--chrome-gradient);
+      }
+
+      .topbar {
+        width: var(--page-w);
+        padding: 0;
+      }
+
+      .page {
+        box-shadow: var(--page-shadow);
+      }
+
+      .stripe { height: 10px; }
+
+      .sheet { padding: 1.35rem var(--margin-x) 2.8rem; }
+
+      h1 {
+        padding-right: 0;
+        font-size: clamp(1.15rem, 2.4vw, 1.42rem);
+      }
+
+      .lang-chip {
+        top: 0.85rem;
+        font-size: 0.65rem;
+      }
+
+      .byline {
+        white-space: nowrap;
+        font-size: 0.78rem;
+      }
+
+      .columns {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--col-gap);
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: justify;
+        hyphens: auto;
+      }
+
+      .columns p { margin: 0 0 0.65em; }
+
+      .sculpture {
+        width: 41%;
+        max-width: 11rem;
+      }
+
+      .painting,
+      .page11-art {
+        width: 88%;
+        max-width: 18rem;
+        margin: 0.4em auto 0.6em;
+      }
+
+      .bio {
+        text-align: right;
+        font-size: 0.92em;
+      }
+
+      .controls {
+        position: static;
+        width: var(--page-w);
+        max-width: none;
+        justify-content: center;
+        gap: 0.65rem;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        border: 0;
+        font-size: 0.9rem;
+      }
+      .controls button {
+        min-width: 5.5rem;
+        padding: 0.55rem 1.1rem;
+      }
+      .controls button:not(:disabled):hover,
+      .theme-toggle:hover {
+        filter: brightness(1.05);
+      }
+
+      .hint { display: block; max-width: 22rem; }
+      .credit,
+      .zine-links {
+        width: var(--page-w);
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
+      <span class="icon" aria-hidden="true">◐</span>
+      <span class="label">Theme</span>
+    </button>
+  </div>
+  <div class="stage" aria-live="polite">
+    <div class="book" id="book">
+      <article class="page is-active" data-index="0" data-mag="10" data-lang="en" lang="en" aria-label="English page 10">
+        <div class="stripe" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="sheet">
+          <p class="lang-chip">EN</p>
+          <h1>
+            <span class="dark">La Escuela del Sur:</span>
+            <span class="warm"> a living tradition</span>
+          </h1>
+          <div class="byline-row">
+            <p class="byline">Lic. María Eugenia Méndez*</p>
+          </div>
+
+          <div class="columns">
+            <div class="col">
+              <p class="drop">
+                <img class="sculpture" src="assets/sculpture.png" alt="Wooden constructive sculpture by Joaquín Torres García" />
+                The arrival of Joaquín Torres García (1874–1949) in Montevideo in 1934 marked a decisive turning point in the development of twentieth-century Uruguayan art. After more than four decades spent mainly in Europe and the United States, he brought with him an extensive artistic trajectory and a conception of art that had matured through diverse experiences. Among his immediate antecedents was Cercle et Carré, the movement founded in Paris with Michel Seuphor in 1929, which gathered figures linked to the abstract tendencies of the European avant-garde. After leaving France and settling in Madrid, Torres García launched the Grupo de Arte Constructivo in 1933, a brief experience that anticipated some aspects of the collective work he would later develop in Uruguay.
+              </p>
+              <p>
+                His arrival in Montevideo found an artistic milieu that received his proposals with interest, though also with resistance. Barely settled, he launched intense public activity aimed at spreading his ideas and creating a space for teaching. He presented his thinking to the Montevideo public, organized exhibitions, gave courses and lectures, and founded Estudio 1037, at Uruguay 1037. There, during 1934, two exhibitions of painting and sculpture took place, and artists interested in his proposals began to gather. That same year he was appointed professor at the Faculty of Architecture of the Universidad de la República, where he proposed a theoretical-practical course on the visual arts of different cultures and periods.
+              </p>
+              <p>
+                Reception was far from unanimous. Sectors linked to social realism questioned the apparent political indifference of his constructive proposal. Torres García responded by defending the autonomy of art and the need to recover universal principles. At the center of his thinking was the search for an art of universal character, grounded in principles able to transcend particular eras and expressions. For Torres García, that universality found in structure (the harmonious relation between the parts and the whole of a work) a common foundation linking modern art with artistic manifestations of different cultures and times. These controversies show the extent to which his arrival introduced a discussion that exceeded formal problems and reached the very conception of art’s function.
+              </p>
+            </div>
+            <div class="col">
+              <p>
+                In that context, toward the end of 1934, the Asociación de Arte Constructivo (AAC) took shape; artists of different generations passed through it, among them Augusto and Horacio Torres, Rosa Acle, Héctor Ragni, Amalia Nieto, María Sara Gurméndez, Víctor Bacchetta, and Edgardo and Alceu Ribeiro. The Association functioned as a space for the training and dissemination of constructivist doctrine through exhibitions, lectures, and publications. Through books and the magazine <em>Círculo y Cuadrado</em>, Torres García’s ideas gained a circulation that accompanied his tireless activity. In 1940 even his five-hundredth lecture was published—testimony to the scale of that labor.
+              </p>
+              <figure class="painting">
+                <img src="assets/constructive-painting.png" alt="Constructive Universalism painting with symbolic grid by Joaquín Torres García" />
+              </figure>
+              <p>
+                Around 1942 a new stage began with the formation of the Taller Torres García (TTG). The School of the South then acquired a decisive pedagogical dimension. Learning developed through everyday work and direct contact between master and disciples.
+              </p>
+            </div>
+          </div>
+          <div class="page-num" aria-hidden="true">10</div>
+        </div>
+      </article>
+
+      <article class="page" data-index="1" data-mag="11" data-lang="en" lang="en" aria-label="English page 11">
+        <div class="sheet">
+          <p class="lang-chip">EN</p>
+          <div class="columns">
+            <div class="col">
+              <p>
+                Structure, proportion, rhythm, and tone constituted the foundations of a training that gave special importance to a “vision of construction” in the creative process, linked to timeless aspects and to the mystery of art. Painting and sculpture coexisted with other techniques and forms of applied art, affirming an artistic conception closely bound to life.
+              </p>
+              <figure class="page11-art">
+                <img src="assets/page11-photo.png" alt="Constructive artwork with symbolic compartments in earth tones" />
+              </figure>
+              <p>
+                Some of the artists linked to the AAC—among them Augusto and Horacio Torres and Edgardo and Alceu Ribeiro—continued to take part in this new stage. Many young artists who later developed careers of their own joined them as well. Julio Alpuy, Francisco Matto, Elsa Andrada, Gonzalo Fonseca, Berta Luisi, Manuel Pailós, Marta Morandi, and José Gurvich belong to a much broader constellation.
+              </p>
+              <p>
+                Nor did Torres García’s death in 1949 interrupt that experience. The TTG continued under the leadership of some of his disciples and through the exchange among its members, prolonging its activity first until 1962 and then until 1967. One of the most significant consequences of this experience was precisely its capacity to generate new spaces for training. Some members of the Workshop began to train other artists and to create spaces of their own.
+              </p>
+            </div>
+            <div class="col">
+              <p>
+                The group MAOTIMA, formed around 1951 and including Manolita Piña and Ifigenia Torres among other women creators, deepened work in textiles through tapestries embroidered with wool. The Taller Collell, launched in 1955 by Josep Collell together with Carmen Cano, developed an important experience around ceramics. Almost in parallel, in 1956, Sótano Sur emerged—promoted by Rodolfo and Jorge Visca, Arquibaldo and Huidobro Almada, Carlos Llanos, and Gastón Olalde—where ceramics, wood, stone, and especially metals were explored. These experiences broadened the technical and pedagogical possibilities of a tradition that was beginning to be transmitted beyond the original Workshop, giving continuity to a conception of art that transcended the particular forms of each experience.
+              </p>
+              <p>
+                How can a teaching formulated more than eighty years ago remain relevant in the art of the present? First, and to paraphrase the master, many of the ideas he upheld precede him. His conception recognizes the existence of a Great Tradition of Art that crosses and links different cultures and eras, founded on universal principles that endure beyond their particular manifestations. From this perspective, the Constructive Art formulated by Torres García belongs to a tradition that precedes him, and whose principles can take on new forms in each time precisely because they must answer to the era in which they are realized.
+              </p>
+              <p>
+                Over the following decades, new generations were formed through workshops, groups, and personal ties, allowing each artist to find particular ways of relating to this legacy and reinterpreting it according to their own pursuits. In this trajectory, the work of Marcelo Larrosa Martinatto stands as a contemporary example of that continuity. His production takes up principles linked to Torres García’s constructivism and reformulates them through a practice of his own, showing one of the many forms this tradition can assume today.
+              </p>
+              <p>
+                More than ninety years after Torres García’s return to Montevideo, the relevance of his ideas makes it possible to understand constructivism as a living tradition that endures across successive generations and continues to open space for new pursuits. This continuity reveals the reach of one of the most significant pedagogical and artistic experiences in the history of Uruguayan art.
+              </p>
+              <p class="bio">
+                *B.A. in Arts and University Technician in Museology, UDELAR<br />
+                Researcher and Curator, MNAV · Faculty of Arts instructor, UDELAR<br />
+                Specialist in the School of the South and the continuing<br />
+                force of its legacy in contemporary Uruguayan art
+              </p>
+            </div>
+          </div>
+          <div class="page-num" aria-hidden="true">11</div>
+        </div>
+      </article>
+
+      <article class="page" data-index="2" data-mag="10" data-lang="es" lang="es" aria-label="Spanish page 10">
+        <div class="stripe" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div class="sheet">
+          <p class="lang-chip">ES</p>
+          <h1>
+            <span class="dark">La Escuela del Sur:</span>
+            <span class="warm"> una tradición vigente</span>
+          </h1>
+          <div class="byline-row">
+            <p class="byline">Lic. María Eugenia Méndez*</p>
+          </div>
+          <div class="columns">
+            <div class="col">
+              <p class="drop">
+                <img class="sculpture" src="assets/sculpture.png" alt="Escultura constructiva de madera de Joaquín Torres García" />
+                La llegada de Joaquín Torres García (1874-1949) a Montevideo en 1934 marcó un punto decisivo en el desarrollo del arte uruguayo del siglo XX. Después de más de cuatro décadas principalmente en Europa y Estados Unidos, traía consigo una extensa trayectoria artística y una concepción del arte que había madurado a través de experiencias diversas. Entre sus antecedentes inmediatos se encontraba Cercle et Carré, movimiento fundado en París junto a Michel Seuphor en 1929, que reunió a figuras vinculadas con las tendencias abstractas de la vanguardia europea. Tras abandonar Francia y establecerse en Madrid, Torres García impulsó en 1933 el Grupo de Arte Constructivo, una experiencia breve que anticipó algunos aspectos de la labor colectiva que desarrollaría posteriormente en Uruguay.
+              </p>
+              <p>
+                Su llegada a Montevideo encontró un ambiente artístico que recibió sus planteos con interés, aunque también con resistencias. Apenas instalado, desplegó una intensa actividad pública orientada a difundir sus ideas y generar un espacio para la enseñanza. Presentó su pensamiento ante el público montevideano, organizó exposiciones, dictó cursos y conferencias y creó el Estudio 1037, ubicado en la calle Uruguay 1037. Allí tuvieron lugar durante 1934 dos exposiciones de pintura y escultura y comenzaron a reunirse algunos de los artistas interesados en sus planteos. Ese mismo año fue nombrado profesor de la Facultad de Arquitectura de la Universidad de la República, donde propuso un curso teórico-práctico dedicado al estudio de las artes plásticas de diferentes culturas y períodos.
+              </p>
+              <p>
+                La recepción estuvo lejos de ser unánime. Desde algunos sectores vinculados al realismo social se cuestionó la aparente indiferencia política de su propuesta constructiva. Torres García respondió defendiendo la autonomía del arte y la necesidad de recuperar principios universales. En el centro de su pensamiento se encontraba la búsqueda de un arte de carácter universal, sustentado en principios capaces de trascender épocas y expresiones particulares. Para Torres García, esa universalidad encontraba en la estructura (relación armónica entre las partes y la totalidad de una obra) un fundamento común que vinculaba el arte moderno con manifestaciones artísticas de diferentes culturas y tiempos. Estas controversias muestran hasta qué punto su llegada introdujo una discusión que excedía los problemas formales y alcanzaba la propia concepción de la función del arte.
+              </p>
+            </div>
+            <div class="col">
+              <p>
+                En ese contexto, a fines de 1934, fue tomando forma la Asociación de Arte Constructivo (AAC), por la que pasaron artistas de distintas generaciones, entre ellos Augusto y Horacio Torres, Rosa Acle, Héctor Ragni, Amalia Nieto, María Sara Gurméndez, Víctor Bacchetta, Edgardo y Alceu Ribeiro. La Asociación funcionó como espacio de formación y difusión de la doctrina constructivista, mediante exposiciones, conferencias y publicaciones. A través de libros y de la revista <em>Círculo y Cuadrado</em>, las ideas de Torres García adquirieron una circulación que acompañó su incansable actividad. En 1940 se publicó incluso su conferencia número quinientos, testimonio de la magnitud de aquella labor.
+              </p>
+              <figure class="painting">
+                <img src="assets/constructive-painting.png" alt="Pintura de Universalismo Constructivo de Joaquín Torres García" />
+              </figure>
+              <p>
+                Hacia 1942 comenzó una nueva etapa con la conformación del Taller Torres García (TTG). La Escuela del Sur adquirió entonces una dimensión pedagógica decisiva. El aprendizaje se desarrollaba a través del trabajo cotidiano y del contacto directo entre maestro y discípulos.
+              </p>
+            </div>
+          </div>
+          <div class="page-num" aria-hidden="true">10</div>
+        </div>
+      </article>
+
+      <article class="page" data-index="3" data-mag="11" data-lang="es" lang="es" aria-label="Spanish page 11">
+        <div class="sheet">
+          <p class="lang-chip">ES</p>
+          <div class="columns">
+            <div class="col">
+              <p>
+                La estructura, la proporción, el ritmo y el tono constituían fundamentos de una formación que concedía especial importancia a una «visión de construcción» en el proceso creador, vinculada a aspectos atemporales y al misterio del arte. Pintura y escultura convivieron con otras técnicas y distintas formas de arte aplicado, afirmando una concepción artística vinculada estrechamente con la vida.
+              </p>
+              <figure class="page11-art">
+                <img src="assets/page11-photo.png" alt="Obra constructiva con compartimentos simbólicos" />
+              </figure>
+              <p>
+                Algunos de los artistas vinculados a la AAC, entre ellos Augusto y Horacio Torres y Edgardo y Alceu Ribeiro, continuaron participando en esta nueva etapa. A ellos se sumaron numerosos jóvenes que desarrollaron posteriormente trayectorias propias. Julio Alpuy, Francisco Matto, Elsa Andrada, Gonzalo Fonseca, Berta Luisi, Manuel Pailós, Marta Morandi y José Gurvich forman parte de una constelación mucho más amplia.
+              </p>
+              <p>
+                La muerte de Torres García en 1949 tampoco interrumpió aquella experiencia. El TTG continuó funcionando bajo la conducción de algunos discípulos y el intercambio de sus integrantes y prolongó su actividad, primeramente hasta 1962, y luego hasta 1967. Una de las consecuencias más significativas de esta experiencia fue precisamente su capacidad de generar nuevos espacios de formación. Algunos integrantes del Taller comenzaron a formar a otros artistas y a crear sus propios espacios.
+              </p>
+            </div>
+            <div class="col">
+              <p>
+                El grupo MAOTIMA, conformado hacia 1951 e integrado por Manolita Piña e Ifigenia Torres, entre otras creadoras, profundizó en el trabajo textil a través de tapices bordados con lana. El Taller Collell, impulsado en 1955 por Josep Collell junto con Carmen Cano, desarrolló una importante experiencia en torno a la cerámica. Casi paralelamente, en 1956 surgió Sótano Sur, promovido por Rodolfo y Jorge Visca, Arquibaldo y Huidobro Almada, Carlos Llanos y Gastón Olalde, donde se trabajó con cerámica, madera, piedra y especialmente metales. Estas experiencias ampliaron las posibilidades técnicas y pedagógicas de una tradición que comenzaba a transmitirse más allá del ámbito original del Taller, dando continuidad a una concepción del arte que trascendía las formas particulares de cada experiencia.
+              </p>
+              <p>
+                ¿Cómo puede una enseñanza formulada hace más de ochenta años continuar vigente en el arte del presente? En primer lugar, y parafraseando al maestro, muchas de las ideas que sostuvo lo anteceden. Su concepción reconoce la existencia de una Gran Tradición del Arte que atraviesa y vincula distintas culturas y épocas, fundada en principios universales que permanecen más allá de sus manifestaciones particulares. Desde esta perspectiva, el Arte Constructivo formulado por Torres García se inscribe en una tradición que lo precede y cuyos principios pueden adquirir nuevas formas en cada tiempo, precisamente porque debe responder a la época en que se realiza.
+              </p>
+              <p>
+                A lo largo de las décadas siguientes se fueron formando nuevas generaciones mediante talleres, grupos y vínculos personales, permitiendo que cada artista encuentre modos particulares de relacionarse con este legado y reinterpretarlo de acuerdo con sus propias búsquedas. En este recorrido, la obra de Marcelo Larrosa Martinatto constituye un ejemplo contemporáneo de esa continuidad. Su producción recoge principios vinculados al constructivismo de Torres García y los reformula desde una práctica propia, mostrando una de las múltiples formas que esta tradición puede asumir en la actualidad.
+              </p>
+              <p>
+                A más de noventa años del regreso del maestro Torres García a Montevideo, la vigencia de sus ideas permite comprender el constructivismo como una tradición viva, que perdura a través de sucesivas generaciones y continúa dando lugar a nuevas búsquedas. Esta continuidad revela el alcance de una de las experiencias pedagógicas y artísticas más significativas de la historia del arte uruguayo.
+              </p>
+              <p class="bio">
+                *Lic. en Artes y Técnica Universitaria en Museología por la UDELAR<br />
+                Investigadora y Curadora del MNAV · Docente de la Facultad de Artes – UDELAR<br />
+                Especialista en la Escuela del Sur y la vigencia de su legado en el arte<br />
+                uruguayo contemporáneo
+              </p>
+            </div>
+          </div>
+          <div class="page-num" aria-hidden="true">11</div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button type="button" id="prev" disabled aria-label="Previous page">← Prev</button>
+    <span id="status">EN · page 10</span>
+    <button type="button" id="next" aria-label="Next page">Next →</button>
+  </div>
+  <p class="hint">Tap the page, use the buttons, or press ← → · EN then ES</p>
+  <p class="credit">
+    Spanish text originally published in
+    <strong>La Revista</strong> Nº&nbsp;375 (Octubre&nbsp;2026),
+    article “La Escuela del Sur: una tradición vigente” by Lic.&nbsp;María Eugenia Méndez.
+    Read the issue on
+    <a href="https://heyzine.com/flip-book/095c92866d.html" target="_blank" rel="noopener noreferrer">Heyzine</a>.
+  </p>
+  <p class="credit">
+    English edition, bilingual flip viewer, and web design by
+    <a href="https://github.com/freechie" target="_blank" rel="noopener noreferrer"><strong>John</strong></a>.
+  </p>
+  <ul class="zine-links">
+    <li><a href="https://heyzine.com/flip-book/095c92866d.html" target="_blank" rel="noopener noreferrer">La Revista Nº 375</a></li>
+    <li><a href="https://heyzine.com/flip-book/095c92866d.html#page/10" target="_blank" rel="noopener noreferrer">Article · p. 10</a></li>
+    <li><a href="https://heyzine.com/flip-book/095c92866d.html#page/11" target="_blank" rel="noopener noreferrer">Article · p. 11</a></li>
+    <li><a href="https://github.com/freechie/escuela-del-sur-en-es" target="_blank" rel="noopener noreferrer">Source on GitHub</a></li>
+  </ul>
+
+  <script>
+    const book = document.getElementById("book");
+    const pages = [...book.querySelectorAll(".page")];
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const status = document.getElementById("status");
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = themeToggle.querySelector(".icon");
+    const themeLabel = themeToggle.querySelector(".label");
+    const mq = matchMedia("(prefers-color-scheme: dark)");
+    let index = 0;
+
+    function systemTheme() {
+      return mq.matches ? "dark" : "light";
+    }
+
+    function syncThemeButton() {
+      const theme = document.documentElement.dataset.theme;
+      const source = document.documentElement.dataset.themeSource;
+      if (source === "auto") {
+        themeIcon.textContent = "◐";
+        themeLabel.textContent = `Auto · ${theme}`;
+      } else if (theme === "dark") {
+        themeIcon.textContent = "☾";
+        themeLabel.textContent = "Dark";
+      } else {
+        themeIcon.textContent = "☀";
+        themeLabel.textContent = "Light";
+      }
+      themeToggle.setAttribute("aria-label", `Color theme: ${themeLabel.textContent}. Click to cycle.`);
+    }
+
+    function applyTheme(theme, source) {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.themeSource = source;
+      if (source === "manual") localStorage.setItem("theme", theme);
+      else localStorage.removeItem("theme");
+      syncThemeButton();
+    }
+
+    function initTheme() {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") applyTheme(saved, "manual");
+      else applyTheme(systemTheme(), "auto");
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const source = document.documentElement.dataset.themeSource;
+      const theme = document.documentElement.dataset.theme;
+      // Cycle: Auto → Light → Dark → Auto
+      if (source === "auto") applyTheme("light", "manual");
+      else if (theme === "light") applyTheme("dark", "manual");
+      else applyTheme(systemTheme(), "auto");
+    });
+    mq.addEventListener("change", () => {
+      if (document.documentElement.dataset.themeSource === "auto") {
+        applyTheme(systemTheme(), "auto");
+      }
+    });
+
+    function render({ scrollTop = false } = {}) {
+      pages.forEach((page, i) => page.classList.toggle("is-active", i === index));
+      prev.disabled = index === 0;
+      next.disabled = index === pages.length - 1;
+      const active = pages[index];
+      const lang = active.dataset.lang === "es" ? "ES" : "EN";
+      status.textContent = `${lang} · page ${active.dataset.mag} · ${index + 1}/${pages.length}`;
+      if (scrollTop) {
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      }
+    }
+
+    function go(delta) {
+      const nextIndex = Math.min(pages.length - 1, Math.max(0, index + delta));
+      if (nextIndex === index) return;
+      index = nextIndex;
+      render({ scrollTop: true });
+    }
+
+    prev.addEventListener("click", (e) => { e.stopPropagation(); go(-1); });
+    next.addEventListener("click", (e) => { e.stopPropagation(); go(1); });
+    book.addEventListener("click", () => {
+      if (index < pages.length - 1) go(1);
+      else go(-(pages.length - 1));
+    });
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
+    });
+
+    initTheme();
+    render();
+  </script>
+</body>
+</html>
